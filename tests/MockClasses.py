@@ -20,93 +20,69 @@ DEFAULT_UUID         = "ffffffff-ffff-ffff-ffff-fffffffffffe"
 
 #####  Mock Database Interface Class  #####
 
-class MockDb():
+class MockDbConnection(MagicMock):
 
-    class MockConnection():
+    class MockCursor(MagicMock):
 
-        class cursor():
-
-            def __init__(self,
-                         buffered : bool):
-                """A bare minimum mock to ensure test compatability.
-
-                   Input: self - Pointer to the current object instance.
-                          buffered - If the cursor should be buffered or not.
-
-                   Output: none.
-                """
-
-                self.buffered = buffered
-                self.last_cmd = ""
-
-            def execute(self,
-                        cmd : Optional[str] = None):
-                """A bare minimum mock to ensure test compatability.
-
-                   Input: self - Pointer to the current object instance.
-                          cmd - What command to execute.
-
-                   Output: none.
-                """
-
-                self.last_cmd = cmd
-                return
-
-            def fetchone(self):
-                """A bare minimum mock to ensure test compatability.
-
-                   Input: self - Pointer to the current object instance.
-
-                   Output: none.
-                """
-
-                return self.last_cmd
-
-        def __init__(self):
+        def __init__(self,
+                        buffered : bool):
             """A bare minimum mock to ensure test compatability.
 
-               Input: self - Pointer to the current object instance.
-                      content - What data to post to the channel.
-                      embed - An optional embed to add to the message.
-                      file - An optional fileadd to the message.
+                Input: self - Pointer to the current object instance.
+                        buffered - If the cursor should be buffered or not.
 
-               Output: none.
+                Output: none.
             """
-
-            self.auto_reconnect = False
-            self.database       = ""
+            super().__init__()
+            self.buffered = buffered
+            self.last_cmd = ""
 
         def execute(self,
-                    cmd : Optional[str] = None) -> str :
+                    cmd : Optional[str] = None):
             """A bare minimum mock to ensure test compatability.
 
-               Input: self - Pointer to the current object instance.
-                      cmd - What command to execute.
+                Input: self - Pointer to the current object instance.
+                        cmd - What command to execute.
 
-               Output: none.
+                Output: none.
             """
 
-            return input
+            self.last_cmd = cmd
+            return
 
-    def connect(self,
-                host       : str,
-                port       : int,
-                user       : str,
-                password   : str,
-                autocommit : bool) -> MockConnection:
+        def fetchone(self):
+            """A bare minimum mock to ensure test compatability.
+
+                Input: self - Pointer to the current object instance.
+
+                Output: none.
+            """
+
+            return self.last_cmd
+
+    def __init__(self,
+            host       : str,
+            port       : int,
+            user       : str,
+            password   : str,
+            autocommit : bool):
         """A bare minimum mock to ensure test compatability.
 
-           Input: self - Pointer to the current object instance.
-                  autocommit - Whether to automatically publish results or not.
-                  host - The DB's URL.
-                  password - the db user's password.
-                  port - The DB's port.
-                  user - The user to add to DB commands.
+            Input: self - Pointer to the current object instance.
+                    autocommit - Whether to automatically publish results or not.
+                    host - The DB's URL.
+                    password - the db user's password.
+                    port - The DB's port.
+                    user - The user to add to DB commands.
 
-           Output: MockConnection - a fake DB connection.
+            Output: MockDbConnection - a fake DB connection.
         """
+        super().__init__()
+        self.auto_reconnect = False
+        self.database       = ""
+        self.cursor = MagicMock()
+        self.cursor.return_value = MockDbConnection.MockCursor(True)
 
-        return self.MockConnection()
 
 class MockDbInterface():
 
